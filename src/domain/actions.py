@@ -28,4 +28,25 @@ def update(estado: GameState, accion: Action) -> GameState:
                 jugadores.append(replace(jug, puntaje=max(0, jug.puntaje - 5), respondio=False, ok=None))
         evento = Event(datetime.now(), "Nueva pregunta.")
         return replace(estado, pregunta_actual=preg, tiempo_restante=20, ronda=estado.ronda + 1, jugadores=tuple(jugadores), historial=estado.historial + (evento,))
+    
+    if accion.tipo == ActionType.RESPONDER:
+        jugadores = []
+        correcta = accion.datos["correcta"]
+        id_jug = accion.datos["id"]
+        for jug in estado.jugadores:
+            if jug.id == id_jug:
+                if jug.respondio:
+                    jugadores.append(jug)
+                else:
+                    pts = jug.puntaje + 10 if correcta else jug.puntaje
+                    jugadores.append(replace(jug, puntaje=pts, respondio=True, ok=correcta))
+            else:
+                jugadores.append(jug)
+        evento = Event(datetime.now(), accion.datos["mensaje"])
+        return replace(estado, jugadores=tuple(jugadores), historial=estado.historial + (evento,))
+
+    if accion.tipo == ActionType.FINALIZAR:
+        evento = Event(datetime.now(), "Partida finalizada.")
+        return replace(estado, juego_activo=False, historial=estado.historial + (evento,))
+    
     return estado
