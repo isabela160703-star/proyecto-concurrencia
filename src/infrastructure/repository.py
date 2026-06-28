@@ -69,5 +69,7 @@ async def guardar_ranking(self, nombre_jugador, puntaje, es_ganador):
                     VALUES (@real_id, ?, 1, ?)
             END
             """
+    # Le pasamos el nombre primero, y luego los valores a sumar/insertar
+            await self.db.ejecutar(sql, (nombre_jugador, puntaje, victoria_val, puntaje, victoria_val))
             
 
