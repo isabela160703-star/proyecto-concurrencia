@@ -16,3 +16,14 @@ class Repository:
                 respuesta_correcta=fila[6].strip()
             ))
         return preguntas
+        
+     async def guardar_jugador(self, id_jug, nom):
+        sql = """
+        IF NOT EXISTS (SELECT * FROM Jugadores WHERE nombre = ?)
+        BEGIN
+            SET IDENTITY_INSERT Jugadores ON;
+            INSERT INTO Jugadores (id_jugador, nombre) VALUES (?, ?);
+            SET IDENTITY_INSERT Jugadores OFF;
+        END
+        """
+        await self.db.ejecutar(sql, (nom, id_jug, nom))
