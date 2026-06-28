@@ -27,3 +27,25 @@ class Repository:
         END
         """
         await self.db.ejecutar(sql, (nom, id_jug, nom))
+
+async def crear_partida(self):
+        sql = "INSERT INTO Partidas (fecha_inicio, estado) OUTPUT INSERTED.id_partida VALUES (GETDATE(), 'ACTIVA')"
+        datos = await self.db.consultar(sql)
+        return datos[0][0]
+
+
+async def finalizar_partida(self, id_partida, duracion_segundos):
+        sql = "UPDATE Partidas SET fecha_fin = GETDATE(), duracion_segundos = ?, estado = 'FINALIZADA' WHERE id_partida = ?"
+        await self.db.ejecutar(sql, (duracion_segundos, id_partida))
+
+
+async def guardar_respuesta(self, id_partida, id_jugador, id_pregunta, correcta):
+        sql = "INSERT INTO Respuestas (id_partida, id_jugador, id_pregunta, correcta) VALUES (?, ?, ?, ?)"
+        await self.db.ejecutar(sql, (id_partida, id_jugador, id_pregunta, correcta))
+
+
+async def guardar_evento(self, id_partida, descripcion):
+        sql = "INSERT INTO HistorialEventos (id_partida, descripcion) VALUES (?, ?)"
+        await self.db.ejecutar(sql, (id_partida, descripcion))
+
+
