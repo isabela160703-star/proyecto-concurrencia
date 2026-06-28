@@ -54,5 +54,20 @@ async def guardar_ranking(self, nombre_jugador, puntaje, es_ganador):
             DECLARE @real_id INT;
             -- 1. Buscamos el ID verdadero del jugador en la BD usando su nombre
             SELECT TOP 1 @real_id = id_jugador FROM Jugadores WHERE nombre = ?;
+            IF @real_id IS NOT NULL
+            BEGIN
+                IF EXISTS(SELECT * FROM Ranking WHERE id_jugador = @real_id)
+                    -- 2. Si ya tiene ranking, se lo sumamos (acumulativo)
+                    UPDATE Ranking 
+                    SET puntaje_total = ISNULL(puntaje_total, 0) + ?, 
+                        partidas_jugadas = ISNULL(partidas_jugadas, 0) + 1,
+                        victorias = ISNULL(victorias, 0) + ?
+                    WHERE id_jugador = @real_id
+                ELSE
+                    -- 3. Si es su primera vez, lo insertamos
+                    INSERT INTO Ranking (id_jugador, puntaje_total, partidas_jugadas, victorias) 
+                    VALUES (@real_id, ?, 1, ?)
+            END
+            """
             
 
