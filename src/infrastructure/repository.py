@@ -48,4 +48,11 @@ async def guardar_evento(self, id_partida, descripcion):
         sql = "INSERT INTO HistorialEventos (id_partida, descripcion) VALUES (?, ?)"
         await self.db.ejecutar(sql, (id_partida, descripcion))
 
+async def guardar_ranking(self, nombre_jugador, puntaje, es_ganador):
+            victoria_val = 1 if es_ganador else 0
+            sql = """
+            DECLARE @real_id INT;
+            -- 1. Buscamos el ID verdadero del jugador en la BD usando su nombre
+            SELECT TOP 1 @real_id = id_jugador FROM Jugadores WHERE nombre = ?;
+            
 
