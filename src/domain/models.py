@@ -40,3 +40,13 @@ class Event:
 class Action:
     tipo: ActionType
     datos: dict = field(default_factory=dict)
+
+@dataclass(frozen=True)
+class GameState:
+    id_partida: int | None = None
+    jugadores: Tuple[Player, ...] = field(default_factory=tuple)
+    pregunta_actual: Question | None = None
+    ronda: int = 1
+    tiempo_restante: int = 20
+    juego_activo: bool = False
+    historial: Tuple[Event, ...] = field(default_factory=tuple)
