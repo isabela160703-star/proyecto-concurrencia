@@ -1,5 +1,15 @@
 from dataclasses import dataclass, field
 from typing import Tuple
+from datetime import datetime
+from enum import Enum
+
+class ActionType(str, Enum):
+    AGREGAR_JUGADOR = "AGREGAR_JUGADOR"
+    INICIAR_PARTIDA = "INICIAR_PARTIDA"
+    RESTAR_TIEMPO = "RESTAR_TIEMPO"
+    CAMBIAR_PREGUNTA = "CAMBIAR_PREGUNTA"
+    RESPONDER = "RESPONDER"
+    FINALIZAR = "FINALIZAR"
 
 @dataclass(frozen=True)
 class Player:
@@ -19,3 +29,14 @@ class Question:
     opcion_c: str
     opcion_d: str
     respuesta_correcta: str
+
+@dataclass(frozen=True)
+class Event:
+    fecha_hora: datetime
+    descripcion: str
+
+
+@dataclass(frozen=True)
+class Action:
+    tipo: ActionType
+    datos: dict = field(default_factory=dict)
